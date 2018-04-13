@@ -1,0 +1,15 @@
+[webserver]
+server1 ansible_ssh_host=54.200.143.27
+server2 ansible_ssh_host=35.161.107.37
+server3 ansible_ssh_host=52.26.56.42
+##ansible_python_interpreter=/usr/bin/python3
+
+#[local]
+#localserver ansible_ssh_host=127.0.0.1
+
+
+[webserver:vars]
+ansible_ssh_user=centos
+ansible_ssh_private_key_file=/devops-challenge/ansible/tbkey.pem
+
+

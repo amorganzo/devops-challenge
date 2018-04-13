@@ -1,0 +1,76 @@
+- hosts: webserver
+  remote_user: root
+
+  tasks:
+  
+  - name: Update
+    become: yes
+    shell: "yum -y update"
+    args:
+    executable: /bin/bash
+  
+  - name: Disable SElinux
+    become: yes
+    selinux:
+      state: disabled
+
+
+  tasks:
+    - name: Install yum utils
+      become: yes
+      yum:
+        name: yum-utils
+        state: latest
+
+    - name: Install device-mapper-persistent-data
+      become: yes
+      yum:
+        name: device-mapper-persistent-data
+        state: latest
+
+    - name: Install lvm2
+      become: yes
+      yum:
+        name: lvm2
+        state: latest
+
+    - name: Add Docker repo
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docer-ce.repo
+      become: yes
+
+    - name: Enable Docker Edge repo
+      ini_file:
+        dest: /etc/yum.repos.d/docer-ce.repo
+        section: 'docker-ce-edge'
+        option: enabled
+        value: 0
+      become: yes
+
+    - name: Enable Docker Test repo
+      ini_file:
+        dest: /etc/yum.repos.d/docer-ce.repo
+        section: 'docker-ce-test'
+        option: enabled
+        value: 0
+      become: yes
+
+    - name: Install Docker
+      package:
+        name: docker-ce
+        state: latest
+      become: yes
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+      become: yes
+    
+    - name: Installing nginx inside docker
+      become: yes
+      shell: "docker run -d --name tbnginx -p 80:80 nginx"
+      args:
+      executable: /bin/bash
